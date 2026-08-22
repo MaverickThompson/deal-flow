@@ -1,0 +1,3 @@
+exa-py==2.14.0
+notion-client==2.2.1
+PyYAML==6.0.2

@@ -1,0 +1,40 @@
+# Edit this file to change what the pipeline hunts for.
+# No code changes needed. Add, remove, or reword freely.
+#
+# Write each query as a DESCRIPTION OF THE IDEAL PAGE, not keywords.
+# Good: "post from a founder announcing they left their job to build an AI agent company"
+# Bad:  "quit job AI agent startup"
+
+signals:
+  - query: "post from a founder announcing they just left their job to build an AI agent startup"
+    sector: "ai agents"
+    num_results: 15
+
+  - query: "post from a founder announcing they dropped out of college or left school to build a consumer app for Gen Z users"
+    sector: "gen z consumer"
+    num_results: 15
+
+  - query: "blog post or thread where a developer describes what broke when they ran AI agents in production, failure report and lessons learned"
+    sector: "ai agents"
+    num_results: 10
+
+  - query: "post from a technical founder announcing they are building new infrastructure for running or serving AI models"
+    sector: "ai infrastructure"
+    num_results: 10
+
+  - query: "post from a student or recent grad announcing a consumer app they built that is spreading on college campuses"
+    sector: "gen z consumer"
+    num_results: 15
+
+companies:
+  - query: "category:company early stage consumer social app built for Gen Z college students, small team, founded recently"
+    sector: "gen z consumer"
+    num_results: 20
+
+  - query: "category:company early stage startup building AI agent orchestration or agent reliability tooling, small team"
+    sector: "ai agents"
+    num_results: 20
+
+  - query: "category:company early stage startup building inference, serving, or evaluation infrastructure for AI models"
+    sector: "ai infrastructure"
+    num_results: 15
