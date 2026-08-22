@@ -1,0 +1,44 @@
+.github/workflows/daily.yml
+name: Deal Flow — daily
+
+on:
+  schedule:
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: deal-flow
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Find founder signal
+        env:
+          EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_SIGNALS_DB: ${{ secrets.NOTION_SIGNALS_DB }}
+          NOTION_COMPANIES_DB: ${{ secrets.NOTION_COMPANIES_DB }}
+        run: python scripts/run.py signals
+
+  companies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Map companies
+        env:
+          EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_SIGNALS_DB: ${{ secrets.NOTION_SIGNALS_DB }}
+          NOTION_COMPANIES_DB: ${{ secrets.NOTION_COMPANIES_DB }}
+        run: python scripts/run.py companies
