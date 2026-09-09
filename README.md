@@ -8,6 +8,8 @@ Actions.
 writes lands as unverified with `Status = new` for human triage. That is
 deliberate.
 
+The code lives in the deal-flow folder. Every path below is relative to it.
+
 ---
 
 ## Setup
