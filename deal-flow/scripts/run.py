@@ -53,6 +53,22 @@ ARTICLE_DOMAINS = {
     "pitchbook.com", "wikipedia.org", "glassdoor.com", "indeed.com",
 }
 
+# Path shapes that mean "this page is an article", whatever the domain carries.
+# theoutpost.ai/news-story/featherless-ai-... is a story, not a company.
+ARTICLE_PATH_RE = re.compile(
+    r"/(news|news-story|newsroom|blog|article|articles|story|stories|posts?|"
+    r"press|press-release|insights)/|/\d{4}/\d{2}/",
+    re.I,
+)
+
+# Startup directories and profile pages: the slug is the company, not the host.
+# startuphub.ai/startups/inference-net is inference-net, not Startuphub.
+DIRECTORY_PATH_RE = re.compile(
+    r"/(?:startups?|companies|developers?|profiles?|orgs?|organizations?|"
+    r"directory)/([^/?#]{2,})",
+    re.I,
+)
+
 # On code hosts the repo path is the identity, not the platform domain.
 REPO_HOSTS = {"github.com", "gitlab.com", "huggingface.co", "bitbucket.org"}
 
@@ -152,7 +168,11 @@ def is_article(url: str) -> bool:
     host = host_of(url)
     if not host:
         return False
-    return any(host == d or host.endswith("." + d) for d in ARTICLE_DOMAINS)
+    if any(host == d or host.endswith("." + d) for d in ARTICLE_DOMAINS):
+        return True
+    if host in REPO_HOSTS:
+        return False
+    return bool(ARTICLE_PATH_RE.search(urlparse(url or "").path))
 
 
 def company_name(result) -> str:
@@ -166,10 +186,18 @@ def company_name(result) -> str:
     if not host:
         return (getattr(result, "title", None) or url)[:200]
 
+    path = urlparse(url).path
+
     if host in REPO_HOSTS:
-        parts = [p for p in urlparse(url).path.split("/") if p][:2]
+        parts = [p for p in path.split("/") if p][:2]
         if parts:
             return "/".join(parts)[:200]
+
+    directory = DIRECTORY_PATH_RE.search(path)
+    if directory:
+        slug = directory.group(1).replace("-", " ").replace("_", " ").strip()
+        if slug:
+            return slug.title()[:200]
 
     pieces = host.split(".")
     label = pieces[0]
